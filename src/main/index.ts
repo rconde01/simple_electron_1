@@ -5,8 +5,10 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.commandLine.appendSwitch('enable-unsafe-webgpu');
+app.commandLine.appendSwitch('no-sandbox');
+app.commandLine.appendSwitch('enable-dawn-features', 'allow_unsafe_apis');
 app.commandLine.appendSwitch('enable-features', 'Vulkan');
-app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('use-vulkan', 'native');
 
 function createWindow(): void {
   const win = new BrowserWindow({
