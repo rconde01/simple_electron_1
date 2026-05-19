@@ -6,7 +6,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.commandLine.appendSwitch('enable-unsafe-webgpu');
 if (process.platform === 'linux') {
-  app.commandLine.appendSwitch('enable-features', 'Vulkan');
+  app.commandLine.appendSwitch('enable-features', 'Vulkan,UseSkiaRenderer');
+  app.commandLine.appendSwitch('disable-features', 'VaapiVideoDecoder');
+  app.commandLine.appendSwitch('use-vulkan');
+  app.commandLine.appendSwitch('disable-gpu-sandbox');
 }
 
 function createWindow(): void {
