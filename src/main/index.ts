@@ -8,7 +8,7 @@ app.commandLine.appendSwitch('enable-unsafe-webgpu');
 app.commandLine.appendSwitch('enable-unsafe-swiftshader');
 app.commandLine.appendSwitch('enable-features', 'Vulkan');
 app.commandLine.appendSwitch('use-vulkan', 'swiftshader');
-app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('disable-gpu-sandbox');
 
 function createWindow(): void {
   const win = new BrowserWindow({
