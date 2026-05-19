@@ -4,6 +4,11 @@ import { dirname, join } from 'node:path';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+app.commandLine.appendSwitch('enable-unsafe-webgpu');
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('enable-features', 'Vulkan');
+}
+
 function createWindow(): void {
   const win = new BrowserWindow({
     width: 1024,

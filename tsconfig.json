@@ -11,7 +11,7 @@
     "skipLibCheck": true,
     "verbatimModuleSyntax": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["svelte"]
+    "types": ["svelte", "@webgpu/types"]
   },
   "include": ["src/renderer/**/*.ts", "src/renderer/**/*.svelte", "src/preload/**/*.ts"],
   "exclude": ["node_modules", "out", "dist"]
