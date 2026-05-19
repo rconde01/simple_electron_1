@@ -5,9 +5,7 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.commandLine.appendSwitch('enable-unsafe-webgpu');
-app.commandLine.appendSwitch('enable-unsafe-swiftshader');
 app.commandLine.appendSwitch('enable-features', 'Vulkan');
-app.commandLine.appendSwitch('use-vulkan', 'swiftshader');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
 
 function createWindow(): void {
