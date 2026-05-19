@@ -95,6 +95,7 @@
 <main>
   <header>
     <h1>WebGPU Triangle</h1>
+    <p>Chromium {window.api.versions.chrome}</p>
     <p>{status}</p>
   </header>
   <canvas bind:this={canvas}></canvas>
