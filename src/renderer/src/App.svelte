@@ -27,9 +27,7 @@
       return;
     }
 
-    const adapter =
-      (await navigator.gpu.requestAdapter()) ??
-      (await navigator.gpu.requestAdapter({ forceFallbackAdapter: true }));
+    const adapter = await navigator.gpu.requestAdapter({ forceFallbackAdapter: true });
     if (!adapter) {
       status = 'No WebGPU adapter found.';
       return;
