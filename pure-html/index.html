@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>WebGPU Triangle</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #1a1a1a;
+    color: #ddd;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas {
+    width: 600px;
+    height: 600px;
+    background: #000;
+    display: block;
+  }
+  #status {
+    margin-top: 12px;
+    font-size: 14px;
+    white-space: pre-wrap;
+    text-align: center;
+    max-width: 600px;
+  }
+  .err { color: #ff7070; }
+  .ok  { color: #70ff90; }
+</style>
+</head>
+<body>
+  <canvas id="gfx" width="600" height="600"></canvas>
+  <div id="status">Initializing…</div>
+
+<script type="module">
+const statusEl = document.getElementById('status');
+const canvas = document.getElementById('gfx');
+
+function setStatus(msg, cls) {
+  statusEl.textContent = msg;
+  statusEl.className = cls || '';
+}
+
+async function main() {
+  if (!navigator.gpu) {
+    setStatus('navigator.gpu is undefined — WebGPU is not available in this browser.', 'err');
+    return;
+  }
+
+  // Try a normal adapter first, then fall back to the software adapter.
+  let adapter = await navigator.gpu.requestAdapter({ forceFallbackAdapter: true });
+  let usedFallback = true;
+  if (!adapter) {
+    setStatus(
+      'No WebGPU adapter available (neither hardware nor fallback).\n' +
+      'Try launching Chrome with:\n' +
+      '  --enable-unsafe-webgpu --use-webgpu-adapter=swiftshader',
+      'err'
+    );
+    return;
+  }
+
+  const device = await adapter.requestDevice();
+  const context = canvas.getContext('webgpu');
+  const format = navigator.gpu.getPreferredCanvasFormat();
+  context.configure({ device, format, alphaMode: 'opaque' });
+
+  const shaderModule = device.createShaderModule({
+    code: /* wgsl */ `
+      struct VSOut {
+        @builtin(position) pos : vec4f,
+        @location(0) color   : vec3f,
+      };
+
+      @vertex
+      fn vs(@builtin(vertex_index) i : u32) -> VSOut {
+        var positions = array<vec2f, 3>(
+          vec2f( 0.0,  0.7),
+          vec2f(-0.7, -0.6),
+          vec2f( 0.7, -0.6),
+        );
+        var colors = array<vec3f, 3>(
+          vec3f(1.0, 0.2, 0.2),
+          vec3f(0.2, 1.0, 0.3),
+          vec3f(0.3, 0.4, 1.0),
+        );
+        var out : VSOut;
+        out.pos   = vec4f(positions[i], 0.0, 1.0);
+        out.color = colors[i];
+        return out;
+      }
+
+      @fragment
+      fn fs(in : VSOut) -> @location(0) vec4f {
+        return vec4f(in.color, 1.0);
+      }
+    `,
+  });
+
+  const pipeline = device.createRenderPipeline({
+    layout: 'auto',
+    vertex:   { module: shaderModule, entryPoint: 'vs' },
+    fragment: { module: shaderModule, entryPoint: 'fs', targets: [{ format }] },
+    primitive: { topology: 'triangle-list' },
+  });
+
+  function frame() {
+    const encoder = device.createCommandEncoder();
+    const pass = encoder.beginRenderPass({
+      colorAttachments: [{
+        view: context.getCurrentTexture().createView(),
+        clearValue: { r: 0.05, g: 0.05, b: 0.08, a: 1 },
+        loadOp: 'clear',
+        storeOp: 'store',
+      }],
+    });
+    pass.setPipeline(pipeline);
+    pass.draw(3);
+    pass.end();
+    device.queue.submit([encoder.finish()]);
+  }
+
+  frame();
+
+  const info = adapter.info ?? {};
+  const desc = [
+    `Adapter: ${info.vendor || '(unknown vendor)'} / ${info.architecture || info.device || '(unknown)'}`,
+    usedFallback ? 'Using FALLBACK (software) adapter' : 'Using default adapter',
+  ].join('\n');
+  setStatus(desc, 'ok');
+}
+
+main().catch(err => {
+  console.error(err);
+  setStatus('Error: ' + (err && err.message ? err.message : String(err)), 'err');
+});
+</script>
+</body>
+</html>

@@ -10,6 +10,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // app.commandLine.appendSwitch('use-angle', 'vulkan');
 // app.commandLine.appendSwitch('enable-features', 'Vulkan,VulkanFromANGLE');
 
+app.commandLine.appendSwitch('enable-unsafe-webgpu');
+app.commandLine.appendSwitch('enable-unsafe-swiftshader');
+app.commandLine.appendSwitch('use-vulkan');
+app.commandLine.appendSwitch('use-webgpu-adapter=swiftshader');
+
+
 function createWindow(): void {
   const win = new BrowserWindow({
     width: 1024,
