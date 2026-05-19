@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 app.commandLine.appendSwitch('enable-unsafe-webgpu');
+app.commandLine.appendSwitch('no-sandbox');
 app.commandLine.appendSwitch('ozone-platform', 'x11');
 app.commandLine.appendSwitch('use-angle', 'vulkan');
 app.commandLine.appendSwitch('enable-features', 'Vulkan,VulkanFromANGLE');
