@@ -9,9 +9,8 @@ app.commandLine.appendSwitch('enable-unsafe-swiftshader');
 app.commandLine.appendSwitch('enable-features', 'Vulkan');
 app.commandLine.appendSwitch('use-vulkan', 'swiftshader');
 app.commandLine.appendSwitch('disable-gpu-sandbox');
+app.commandLine.appendSwitch('in-process-gpu');
 app.commandLine.appendSwitch('enable-logging', 'stderr');
-app.commandLine.appendSwitch('v', '1');
-app.commandLine.appendSwitch('vmodule', 'gpu/*=2,dawn/*=2,swiftshader/*=2');
 
 function createWindow(): void {
   const win = new BrowserWindow({
